@@ -15,9 +15,7 @@ const authenticate = async (req, res, next) => {
 
     const user = await User.findById(id);
     const session = await Session.findById(sid); // find session by id
-    console.log(id, sid);
-    console.log(user);
-    console.log(session);
+
     if (
       !user ||
       !user.token ||

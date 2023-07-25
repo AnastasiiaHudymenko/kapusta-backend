@@ -81,10 +81,10 @@ const login = async (req, res) => {
 
   await User.findByIdAndUpdate(user._id, { token });
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    path: "/users/refreshToken",
-  });
+  // res.cookie("refreshToken", refreshToken, {
+  //   httpOnly: true,
+  //   path: "/users/refreshToken",
+  // });
 
   const balance = await Finance.find({ owner: user._id });
   const expense = await Expense.find({ owner: user._id });
@@ -112,11 +112,11 @@ const logout = async (req, res) => {
 };
 
 const refreshToken = async (req, res) => {
-  const { refreshToken } = req.cookies;
+  // const { refreshToken } = req.cookies;
 
-  if (!refreshToken) {
-    throw handleHttpError(403, "Access denied");
-  }
+  // if (!refreshToken) {
+  //   throw handleHttpError(403, "Access denied");
+  // }
 
   const { id } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
