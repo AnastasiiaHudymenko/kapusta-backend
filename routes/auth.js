@@ -11,15 +11,15 @@ const {
   logout,
   // update,
   // avatarUpdate,
-  // getCurrentUser,
-  // refreshToken,
+  getCurrentUser,
+  refreshToken,
   // googleAuth,
   // googleAuthRedirect,
 } = require("../controllers/auth");
 
 router.post("/register", validateSchema(registerSchema), register);
 router.post("/login", validateSchema(loginSchema), login);
-// router.get("/current", authenticate, getCurrentUser);
+router.get("/current", authenticate, getCurrentUser);
 router.post("/logout", authenticate, logout);
 
 // router.patch("/", authenticate, validateSchema(updateSchema), update);
@@ -30,7 +30,7 @@ router.post("/logout", authenticate, logout);
 //   avatarUpdate
 // );
 
-// router.post("/refreshToken", authenticate, refreshToken);
+router.post("/refreshToken", authenticate, refreshToken);
 
 // router.get("/google", googleAuth);
 // router.get("/google-redirect", googleAuthRedirect);

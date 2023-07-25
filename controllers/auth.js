@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { ctrlWrapper, handleHttpError } = require("../helpers");
-const { User, Session } = require("../models"); // add session from models
+const { User, Session, Finance, Expense } = require("../models");
 
 const register = async (req, res) => {
   const { email, password } = req.body;
@@ -61,7 +61,7 @@ const login = async (req, res) => {
   if (!comparePassword)
     throw handleHttpError(401, "Email or password is wrong");
 
-  const newSession = await Session.create({ userId: user._id }); // creatind session for user
+  const newSession = await Session.create({ userId: user._id });
 
   const token = jwt.sign(
     { id: user._id, sid: newSession._id },
@@ -69,7 +69,7 @@ const login = async (req, res) => {
     {
       expiresIn: "24h",
     }
-  ); // adding session id to token
+  );
 
   const refreshToken = jwt.sign(
     { id: user._id, sid: newSession._id },
@@ -77,19 +77,23 @@ const login = async (req, res) => {
     {
       expiresIn: "7d",
     }
-  ); // creating refresh token
+  );
 
   await User.findByIdAndUpdate(user._id, { token });
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     path: "/users/refreshToken",
-  }); // sending refresh token to client
+  });
 
+  const balance = await Finance.find({ owner: user._id });
+  const expense = await Expense.find({ owner: user._id });
   res.json({
     name: user.name,
     email: user.email,
     token,
+    balance: balance[0].balance,
+    expense,
   });
 };
 
@@ -107,14 +111,46 @@ const logout = async (req, res) => {
   res.status(204).json({});
 };
 
+const refreshToken = async (req, res) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    throw handleHttpError(403, "Access denied");
+  }
+
+  const { id } = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+  const session = await Session.findOne({ userId: id }); // checking if session exists
+
+  if (!session) {
+    throw handleHttpError(403, "Access denied");
+  }
+
+  const token = jwt.sign({ id: id, sid: session._id }, process.env.JWT_SECRET, {
+    expiresIn: "15m",
+  });
+
+  res.json({ token });
+};
+
+const getCurrentUser = async (req, res) => {
+  const { _id, name, email } = req.user;
+
+  res.json({
+    id: _id,
+    name,
+    email,
+  });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   // update: ctrlWrapper(update),
   // avatarUpdate: ctrlWrapper(avatarUpdate),
-  // getCurrentUser: ctrlWrapper(getCurrentUser),
-  // refreshToken: ctrlWrapper(refreshToken),
+  getCurrentUser: ctrlWrapper(getCurrentUser),
+  refreshToken: ctrlWrapper(refreshToken),
   // googleAuth: ctrlWrapper(googleAuth),
   // googleAuthRedirect: ctrlWrapper(googleAuthRedirect),
 };

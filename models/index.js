@@ -1,18 +1,16 @@
-// const {
-//   Board,
-//   boardCreateSchema,
-//   boardUpdateSchema,
-//   boardSchema,
-// } = require("./board");
-// const { Column, columnSchemaJoi, columnUpdateSchemaJoi } = require("./column");
-// const { Task, taskSchemaJoi, taskUpdateSchemaJoi } = require("./task");
+const { Finance, financeSchemaJoi } = require("./finance");
 const { User, userSchemaJoi } = require("./user");
-// const { sendEmail, sendEmailSchemaJoi } = require("./sendEmail");
-// const { MiniImg, miniImgSchema } = require("./miniImages");
-// const { Background, backgroundSchema } = require("./background");
-const { Session } = require("./session"); // add session to index.js
-
+const { Session } = require("./session");
+const { Expense, expenseSchemaJoi } = require("./expense");
+const { Income, incomeSchemaJoi } = require("./income");
 module.exports = {
   User,
-  Session, // add session to index.js
+  Session,
+  Expense,
+  Finance,
+  Income,
+  incomeSchemaJoi,
+  userSchemaJoi,
+  financeSchemaJoi,
+  expenseSchemaJoi,
 };
