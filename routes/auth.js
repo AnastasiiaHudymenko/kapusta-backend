@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  schemas: { registerSchema },
+  schemas: { registerSchema, loginSchema },
 } = require("../models/user");
 const { validateSchema, authenticate } = require("../middlewares");
 const {
   register,
-  // login,
-  // logout,
+  login,
+  logout,
   // update,
   // avatarUpdate,
   // getCurrentUser,
@@ -18,9 +18,9 @@ const {
 } = require("../controllers/auth");
 
 router.post("/register", validateSchema(registerSchema), register);
-// router.post("/login", validateSchema(loginSchema), login);
+router.post("/login", validateSchema(loginSchema), login);
 // router.get("/current", authenticate, getCurrentUser);
-// router.post("/logout", authenticate, logout);
+router.post("/logout", authenticate, logout);
 
 // router.patch("/", authenticate, validateSchema(updateSchema), update);
 // router.patch(
