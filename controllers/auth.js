@@ -87,12 +87,13 @@ const login = async (req, res) => {
   // });
 
   const balance = await Finance.find({ owner: user._id });
+
   const expense = await Expense.find({ owner: user._id });
   res.json({
     name: user.name,
     email: user.email,
     token,
-    balance: balance[0].balance,
+    balance: balance[0]?.balance ?? [],
     expense,
   });
 };
